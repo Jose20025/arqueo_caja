@@ -1,3 +1,4 @@
+import 'package:arqueo_caja/pages/home_page.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(const MyApp());
@@ -7,16 +8,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Arqueo de Caja',
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Arqueo de Caja'),
-        ),
-        body: const Center(
-          child: Text('Hello World'),
-        ),
-      ),
+      home: HomePage(),
     );
   }
 }
