@@ -2,7 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class ThemeConfig {
-  static ThemeData getTheme() => ThemeData(
+  static ThemeData getLightTheme() => ThemeData(
+        brightness: Brightness.light,
+        colorSchemeSeed: Colors.blue,
+        fontFamily: GoogleFonts.lato().fontFamily,
+      );
+
+  static ThemeData getDarkTheme() => ThemeData(
         brightness: Brightness.dark,
         colorSchemeSeed: Colors.blue,
         fontFamily: GoogleFonts.lato().fontFamily,

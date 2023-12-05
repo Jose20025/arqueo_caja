@@ -39,7 +39,7 @@ class _HomePageState extends State<HomePage> {
       ),
       body: Center(
         child: Container(
-          margin: const EdgeInsets.all(20),
+          margin: const EdgeInsets.all(10),
           child: ListView.builder(
             itemCount: cashCounts.length,
             itemBuilder: (context, index) {

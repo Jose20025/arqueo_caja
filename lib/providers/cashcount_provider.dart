@@ -8,7 +8,7 @@ class CashCountProvider extends ChangeNotifier {
 
   // TODO: Implementar metodo para obtener la lista de shared preferences
   void loadCashCounts() {
-    _cashCounts.add(CashCount(amount: 2540.2, date: DateTime.now()));
+    _cashCounts.add(CashCount(initalAmount: 2540.2, date: DateTime.now()));
   }
 
   void addCashCount(CashCount cashCount) {

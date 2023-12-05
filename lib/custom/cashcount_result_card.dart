@@ -2,8 +2,8 @@ import 'package:arqueo_caja/models/cash_count.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class CashCountCard extends StatelessWidget {
-  const CashCountCard({
+class CashCountResultCard extends StatelessWidget {
+  const CashCountResultCard({
     super.key,
     required this.cashCount,
   });
@@ -29,34 +29,13 @@ class CashCountCard extends StatelessWidget {
                     leading: Icon(Icons.attach_money),
                     title: Text('Plata en caja'),
                   ),
-                  const Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Text(
-                        'Inicio',
-                        style: TextStyle(fontSize: 18),
-                      ),
-                      Text(
-                        'Fin',
-                        style: TextStyle(fontSize: 18),
-                      )
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Text(
-                        NumberFormat.currency().format(cashCount!.initalAmount),
-                        style: const TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        NumberFormat.currency().format(cashCount!.finalAmount),
-                        style: const TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                    ],
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20),
+                    child: Text(
+                      NumberFormat.currency().format(cashCount!.initalAmount),
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
                   ),
                   const ListTile(
                     leading: Icon(Icons.date_range),
