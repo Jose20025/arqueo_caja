@@ -23,6 +23,13 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
+  void dispose() {
+    context.read<CashCountProvider>().saveCashCounts();
+
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     cashCounts = context.watch<CashCountProvider>().cashCounts;
 
@@ -38,15 +45,47 @@ class _HomePageState extends State<HomePage> {
         child: const Icon(Icons.add),
       ),
       body: Center(
-        child: Container(
-          margin: const EdgeInsets.all(10),
-          child: ListView.builder(
-            itemCount: cashCounts.length,
-            itemBuilder: (context, index) {
-              return CashCountCard(cashCount: cashCounts[index]);
-            },
-          ),
+        child: cashCounts.isNotEmpty
+            ? _CashCountList(cashCounts: cashCounts)
+            : const _NoCashCounts(),
+      ),
+    );
+  }
+}
+
+class _NoCashCounts extends StatelessWidget {
+  const _NoCashCounts();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Padding(
+      padding: EdgeInsets.all(10),
+      child: Text(
+        'No hay arqueos de caja registrados\n\nTrata de agregar uno',
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontSize: 35,
+          fontWeight: FontWeight.bold,
         ),
+      ),
+    );
+  }
+}
+
+class _CashCountList extends StatelessWidget {
+  const _CashCountList({required this.cashCounts});
+
+  final List<CashCount> cashCounts;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.all(10),
+      child: ListView.builder(
+        itemCount: cashCounts.length,
+        itemBuilder: (context, index) {
+          return CashCountCard(cashCount: cashCounts[index]);
+        },
       ),
     );
   }

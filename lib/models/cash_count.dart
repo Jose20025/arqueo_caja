@@ -13,6 +13,14 @@ class CashCount {
     this.finalAmount = finalAmount;
   }
 
+  Map<String, dynamic> toJson() {
+    return {
+      'initalAmount': initalAmount,
+      'finalAmount': finalAmount,
+      'date': date.toIso8601String(),
+    };
+  }
+
   factory CashCount.fromJson(Map<String, dynamic> json) {
     return CashCount(
       initalAmount: json['initalAmount'],
