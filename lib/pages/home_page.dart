@@ -1,6 +1,8 @@
 import 'package:arqueo_caja/custom/cashcount_card.dart';
 import 'package:arqueo_caja/models/cash_count.dart';
+import 'package:arqueo_caja/providers/cashcount_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -10,12 +12,18 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<CashCount> cashCounts = [
-    CashCount(amount: 2540.2, date: DateTime.now())
-  ];
+  List<CashCount> cashCounts = [];
+
+  @override
+  void initState() {
+    context.read<CashCountProvider>().loadCashCounts();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
+    cashCounts = context.watch<CashCountProvider>().cashCounts;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Arqueo de Caja'),
