@@ -1,4 +1,5 @@
 import 'package:arqueo_caja/config/theme.dart';
+import 'package:arqueo_caja/pages/add_cashcount_page.dart';
 import 'package:arqueo_caja/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -41,7 +42,11 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Arqueo de Caja',
       theme: ThemeConfig.getTheme(),
-      home: const HomePage(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const HomePage(),
+        '/add': (context) => const AddCashCountPage(),
+      },
     );
   }
 }
