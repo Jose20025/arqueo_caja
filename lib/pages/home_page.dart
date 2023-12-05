@@ -21,6 +21,12 @@ class _HomePageState extends State<HomePage> {
         title: const Text('Arqueo de Caja'),
         centerTitle: true,
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(context, '/add');
+        },
+        child: const Icon(Icons.add),
+      ),
       body: Center(
         child: Container(
           margin: const EdgeInsets.all(20),
