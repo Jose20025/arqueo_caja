@@ -21,12 +21,6 @@ class CustomInputField extends StatelessWidget {
       child: TextFormField(
         decoration: inputStyle(label),
         keyboardType: TextInputType.number,
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Este campo es requerido';
-          }
-          return null;
-        },
         onSaved: onSaved,
       ),
     );
