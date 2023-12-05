@@ -47,7 +47,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const HomePage(),
         '/add': (context) => const AddCashCountPage(),
-        '/result': (context) => const ResultsPage(),
+        '/result': (context) => const ResultPage(),
       },
     );
   }
