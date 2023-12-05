@@ -23,6 +23,13 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
+  void dispose() {
+    context.read<CashCountProvider>().saveCashCounts();
+
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     cashCounts = context.watch<CashCountProvider>().cashCounts;
 
