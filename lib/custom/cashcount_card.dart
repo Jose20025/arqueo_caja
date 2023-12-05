@@ -16,7 +16,7 @@ class CashCountCard extends StatelessWidget {
           NumberFormat.currency().format(cashCount.amount),
           style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
-        subtitle: Text(DateFormat.yMMMd().format(cashCount.date)),
+        subtitle: Text(DateFormat.yMMMMd().format(cashCount.date)),
       ),
     );
   }
