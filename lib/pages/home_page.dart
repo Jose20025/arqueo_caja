@@ -16,7 +16,9 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    context.read<CashCountProvider>().loadCashCounts();
+    if (context.read<CashCountProvider>().cashCounts.isEmpty) {
+      context.read<CashCountProvider>().loadCashCounts();
+    }
     super.initState();
   }
 
