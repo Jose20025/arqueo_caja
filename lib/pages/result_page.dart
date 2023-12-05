@@ -1,6 +1,6 @@
+import 'package:arqueo_caja/custom/cashcount_result_card.dart';
 import 'package:arqueo_caja/models/cash_count.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class ResultPage extends StatelessWidget {
   const ResultPage({super.key});
@@ -12,54 +12,22 @@ class ResultPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-          title: const Text('Resultados'),
-          centerTitle: true,
-          leading: IconButton(
-            onPressed: () {
-              Navigator.pushReplacementNamed(context, '/');
-            },
-            icon: const Icon(Icons.arrow_back),
-          )),
-      body: Center(
-        child: Column(
-          children: [
-            const SizedBox(
-              height: 20,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Card(
-                child: SizedBox(
-                  height: 180,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      const ListTile(
-                        leading: Icon(Icons.attach_money),
-                        title: Text('Total'),
-                      ),
-                      Text(
-                        '      ${NumberFormat.currency().format(cashCount!.amount)}',
-                        style: const TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                      const ListTile(
-                        leading: Icon(Icons.date_range),
-                        title: Text('Fecha'),
-                      ),
-                      Text(
-                        '      ${DateFormat.yMMMMd().format(cashCount.date)}',
-                        style: const TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.w400),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ],
+        title: const Text('Resultados'),
+        centerTitle: true,
+        leading: const Icon(Icons.attachment_outlined),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        label: const Text(
+          'Ir a inicio',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
+        icon: const Icon(Icons.add),
+      ),
+      body: Center(
+        child: CashCountResultCard(cashCount: cashCount),
       ),
     );
   }
