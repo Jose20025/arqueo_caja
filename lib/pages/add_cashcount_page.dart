@@ -1,8 +1,10 @@
 import 'package:arqueo_caja/custom/custom_input_field.dart';
 import 'package:arqueo_caja/models/cash_count.dart';
+import 'package:arqueo_caja/models/props.dart';
 import 'package:arqueo_caja/providers/cashcount_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
 
 class AddCashCountPage extends StatefulWidget {
   const AddCashCountPage({super.key});
@@ -28,7 +30,7 @@ class _AddCashCountPageState extends State<AddCashCountPage> {
   double? backCash;
   double? backMoney;
 
-  void saveCashCount() {
+  void saveCashCount(Props arguments) {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
@@ -46,15 +48,27 @@ class _AddCashCountPageState extends State<AddCashCountPage> {
         return;
       }
 
-      CashCount cashCount = CashCount(
-        initalAmount: total,
-        date: DateTime.now(),
-      );
+      if (arguments.where! == '/complete') {
+        context
+            .read<CashCountProvider>()
+            .completeCashCount(arguments.cashCount!.id, total);
 
-      context.read<CashCountProvider>().addCashCount(cashCount);
+        context.read<CashCountProvider>().saveCashCounts();
 
-      Navigator.of(context)
-          .pushReplacementNamed('/result', arguments: cashCount);
+        Navigator.of(context).pop();
+      } else {
+        CashCount cashCount = CashCount(
+          id: const Uuid().v4(),
+          initalAmount: total,
+          date: DateTime.now(),
+        );
+
+        context.read<CashCountProvider>().addCashCount(cashCount);
+        context.read<CashCountProvider>().saveCashCounts();
+
+        Navigator.of(context)
+            .pushReplacementNamed(arguments.where!, arguments: cashCount);
+      }
     }
   }
 
@@ -80,13 +94,15 @@ class _AddCashCountPageState extends State<AddCashCountPage> {
 
   @override
   Widget build(BuildContext context) {
+    final arguments = ModalRoute.of(context)!.settings.arguments as Props;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Nuevo arqueo de caja'),
         centerTitle: true,
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: saveCashCount,
+        onPressed: () => saveCashCount(arguments),
         child: const Icon(Icons.save),
       ),
       body: Form(

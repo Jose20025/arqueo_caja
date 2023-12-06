@@ -1,5 +1,6 @@
 import 'package:arqueo_caja/custom/cashcount_card.dart';
 import 'package:arqueo_caja/models/cash_count.dart';
+import 'package:arqueo_caja/models/props.dart';
 import 'package:arqueo_caja/providers/cashcount_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -31,7 +32,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    cashCounts = context.watch<CashCountProvider>().cashCounts;
+    cashCounts =
+        context.watch<CashCountProvider>().cashCounts.reversed.toList();
 
     return Scaffold(
       appBar: AppBar(
@@ -40,7 +42,21 @@ class _HomePageState extends State<HomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.pushNamed(context, '/add');
+          if (cashCounts.isNotEmpty && cashCounts.first.finalAmount == 0) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text(
+                    'Tienes un arqueo sin finalizar, finalizalo antes de agregar otro',
+                    style: TextStyle(color: Colors.white)),
+                backgroundColor: Colors.red,
+                duration: Duration(milliseconds: 1500),
+              ),
+            );
+
+            return;
+          }
+
+          Navigator.pushNamed(context, '/add', arguments: Props(where: '/add'));
         },
         child: const Icon(Icons.add),
       ),
@@ -81,8 +97,9 @@ class _CashCountList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.all(10),
-      child: ListView.builder(
+      child: ListView.separated(
         itemCount: cashCounts.length,
+        separatorBuilder: (context, index) => const Divider(),
         itemBuilder: (context, index) {
           return CashCountCard(cashCount: cashCounts[index]);
         },
