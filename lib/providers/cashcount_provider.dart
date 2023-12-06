@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CashCountProvider extends ChangeNotifier {
-  final List<CashCount> _cashCounts = [];
+  List<CashCount> _cashCounts = [];
 
   List<CashCount> get cashCounts => _cashCounts;
 
@@ -15,7 +15,6 @@ class CashCountProvider extends ChangeNotifier {
     List<String>? cashCountsStringsList = prefs.getStringList('cashCounts');
 
     if (cashCountsStringsList != null) {
-      _cashCounts.clear();
       for (String cashCountString in cashCountsStringsList) {
         _cashCounts.add(CashCount.fromJson(jsonDecode(cashCountString)));
       }
@@ -26,6 +25,17 @@ class CashCountProvider extends ChangeNotifier {
 
   void addCashCount(CashCount cashCount) {
     _cashCounts.add(cashCount);
+    notifyListeners();
+  }
+
+  void completeCashCount(String id, double finalAmount) {
+    _cashCounts = _cashCounts.map((cashCount) {
+      if (cashCount.id == id) {
+        cashCount.setFinalAmount(finalAmount);
+      }
+
+      return cashCount;
+    }).toList();
     notifyListeners();
   }
 
