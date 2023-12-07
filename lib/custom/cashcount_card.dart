@@ -9,15 +9,30 @@ class CashCountCard extends StatelessWidget {
     required this.cashCount,
   });
 
-  final CashCount? cashCount;
+  final CashCount cashCount;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        Navigator.pushNamed(context, '/add',
-            arguments: Props(cashCount: cashCount, where: '/complete'));
-      },
+      onTap: cashCount.finalAmount == 0
+          ? () {
+              Navigator.pushNamed(context, '/add',
+                  arguments: Props(cashCount: cashCount, where: '/complete'));
+            }
+          : () {
+              ScaffoldMessenger.of(context).removeCurrentSnackBar();
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text(
+                    'Este arqueo ya fue finalizado, no se puede editar',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  backgroundColor: Colors.red,
+                  duration: Duration(milliseconds: 1500),
+                ),
+              );
+            },
       child: Column(
         children: [
           const SizedBox(
@@ -54,13 +69,12 @@ class CashCountCard extends StatelessWidget {
                       children: [
                         Text(
                           NumberFormat.currency()
-                              .format(cashCount!.initalAmount),
+                              .format(cashCount.initalAmount),
                           style: const TextStyle(
                               fontSize: 20, fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          NumberFormat.currency()
-                              .format(cashCount!.finalAmount),
+                          NumberFormat.currency().format(cashCount.finalAmount),
                           style: const TextStyle(
                               fontSize: 20, fontWeight: FontWeight.bold),
                         ),
@@ -73,7 +87,7 @@ class CashCountCard extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(left: 20, bottom: 15),
                       child: Text(
-                        DateFormat.yMEd().format(cashCount!.date),
+                        DateFormat.yMEd().format(cashCount.date),
                         style: const TextStyle(
                             fontSize: 15, fontWeight: FontWeight.w400),
                       ),

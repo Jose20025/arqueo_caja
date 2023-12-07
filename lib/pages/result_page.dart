@@ -1,5 +1,6 @@
 import 'package:arqueo_caja/custom/cashcount_result_card.dart';
 import 'package:arqueo_caja/models/cash_count.dart';
+import 'package:arqueo_caja/models/props.dart';
 import 'package:flutter/material.dart';
 
 class ResultPage extends StatelessWidget {
@@ -7,8 +8,7 @@ class ResultPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final CashCount? cashCount =
-        ModalRoute.of(context)?.settings.arguments as CashCount?;
+    final Props arguments = ModalRoute.of(context)?.settings.arguments as Props;
 
     return Scaffold(
       appBar: AppBar(
@@ -27,7 +27,7 @@ class ResultPage extends StatelessWidget {
         icon: const Icon(Icons.add),
       ),
       body: Center(
-        child: CashCountResultCard(cashCount: cashCount),
+        child: CashCountResultCard(cashCount: arguments.cashCount),
       ),
     );
   }
