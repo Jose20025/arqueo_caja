@@ -1,5 +1,4 @@
 import 'package:arqueo_caja/custom/cashcount_result_card.dart';
-import 'package:arqueo_caja/models/cash_count.dart';
 import 'package:arqueo_caja/models/props.dart';
 import 'package:flutter/material.dart';
 
