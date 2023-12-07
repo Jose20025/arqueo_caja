@@ -56,7 +56,8 @@ class _HomePageState extends State<HomePage> {
             return;
           }
 
-          Navigator.pushNamed(context, '/add', arguments: Props(where: '/add'));
+          Navigator.pushNamed(context, '/add',
+              arguments: Props(where: '/result'));
         },
         child: const Icon(Icons.add),
       ),
