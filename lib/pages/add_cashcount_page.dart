@@ -66,8 +66,8 @@ class _AddCashCountPageState extends State<AddCashCountPage> {
         context.read<CashCountProvider>().addCashCount(cashCount);
         context.read<CashCountProvider>().saveCashCounts();
 
-        Navigator.of(context)
-            .pushReplacementNamed(arguments.where!, arguments: cashCount);
+        Navigator.of(context).pushReplacementNamed(arguments.where!,
+            arguments: Props(cashCount: cashCount));
       }
     }
   }
