@@ -106,9 +106,32 @@ class CashCountCard extends StatelessWidget {
                       ),
                       FilledButton.tonalIcon(
                         onPressed: () {
-                          context
-                              .read<DayCashCountProvider>()
-                              .deleteDayCashCount(dayCashCount.id);
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text('Eliminar arqueo'),
+                              content: const Text(
+                                  '¿Está seguro que desea eliminar este arqueo?'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text('Cancelar'),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    context
+                                        .read<DayCashCountProvider>()
+                                        .deleteDayCashCount(dayCashCount.id);
+
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text('Eliminar'),
+                                ),
+                              ],
+                            ),
+                          );
                         },
                         icon: const Icon(Icons.delete),
                         label: const Text('Eliminar'),
