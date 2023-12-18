@@ -1,7 +1,8 @@
 import 'package:arqueo_caja/custom/custom_input_field.dart';
 import 'package:arqueo_caja/models/cash_count.dart';
+import 'package:arqueo_caja/models/day_cash_count.dart';
 import 'package:arqueo_caja/models/props.dart';
-import 'package:arqueo_caja/providers/cashcount_provider.dart';
+import 'package:arqueo_caja/providers/daycashcount_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
@@ -49,25 +50,54 @@ class _AddCashCountPageState extends State<AddCashCountPage> {
       }
 
       if (arguments.where! == '/complete') {
-        context
-            .read<CashCountProvider>()
-            .completeCashCount(arguments.cashCount!.id, total);
+        CashCount finalCashCount = CashCount(
+          amount: total,
+          cash10: cash10,
+          cash20: cash20,
+          cash50: cash50,
+          cash100: cash100,
+          cash200: cash200,
+          money5: money5,
+          money2: money2,
+          money1: money1,
+          money05: money05,
+          backCash: backCash,
+          backMoney: backMoney,
+        );
 
-        context.read<CashCountProvider>().saveCashCounts();
+        context
+            .read<DayCashCountProvider>()
+            .completeDayCashCount(arguments.dayCashCount!.id, finalCashCount);
+
+        context.read<DayCashCountProvider>().saveDayCashCounts();
 
         Navigator.of(context).pop();
       } else {
-        CashCount cashCount = CashCount(
-          id: const Uuid().v4(),
-          initalAmount: total,
-          date: DateTime.now(),
+        CashCount initialCashCount = CashCount(
+          amount: total,
+          cash10: cash10,
+          cash20: cash20,
+          cash50: cash50,
+          cash100: cash100,
+          cash200: cash200,
+          money5: money5,
+          money2: money2,
+          money1: money1,
+          money05: money05,
+          backCash: backCash,
+          backMoney: backMoney,
         );
 
-        context.read<CashCountProvider>().addCashCount(cashCount);
-        context.read<CashCountProvider>().saveCashCounts();
+        DayCashCount dayCashCount = DayCashCount(
+          id: const Uuid().v4(),
+          date: DateTime.now(),
+          initialCashCount: initialCashCount,
+        );
 
-        Navigator.of(context).pushReplacementNamed(arguments.where!,
-            arguments: Props(cashCount: cashCount));
+        context.read<DayCashCountProvider>().addDayCashCount(dayCashCount);
+        context.read<DayCashCountProvider>().saveDayCashCounts();
+
+        Navigator.pop(context);
       }
     }
   }

@@ -1,8 +1,7 @@
 import 'package:arqueo_caja/config/theme.dart';
 import 'package:arqueo_caja/pages/add_cashcount_page.dart';
 import 'package:arqueo_caja/pages/home_page.dart';
-import 'package:arqueo_caja/pages/result_page.dart';
-import 'package:arqueo_caja/providers/cashcount_provider.dart';
+import 'package:arqueo_caja/providers/daycashcount_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
@@ -44,7 +43,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (_) => CashCountProvider(),
+          create: (_) => DayCashCountProvider(),
         )
       ],
       child: MaterialApp(
@@ -56,7 +55,6 @@ class MyApp extends StatelessWidget {
         routes: {
           '/': (context) => const HomePage(),
           '/add': (context) => const AddCashCountPage(),
-          '/result': (context) => const ResultPage(),
         },
       ),
     );
