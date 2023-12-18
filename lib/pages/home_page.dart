@@ -1,7 +1,7 @@
-import 'package:arqueo_caja/custom/cashcount_card.dart';
-import 'package:arqueo_caja/models/cash_count.dart';
+import 'package:arqueo_caja/custom/daycashcount_card.dart';
+import 'package:arqueo_caja/models/day_cash_count.dart';
 import 'package:arqueo_caja/models/props.dart';
-import 'package:arqueo_caja/providers/cashcount_provider.dart';
+import 'package:arqueo_caja/providers/daycashcount_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -13,27 +13,27 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<CashCount> cashCounts = [];
+  List<DayCashCount> dayCashCounts = [];
 
   @override
   void initState() {
-    if (context.read<CashCountProvider>().cashCounts.isEmpty) {
-      context.read<CashCountProvider>().loadCashCounts();
+    if (context.read<DayCashCountProvider>().dayCashCounts.isEmpty) {
+      context.read<DayCashCountProvider>().loadCashCounts();
     }
     super.initState();
   }
 
   @override
   void dispose() {
-    context.read<CashCountProvider>().saveCashCounts();
+    context.read<DayCashCountProvider>().saveDayCashCounts();
 
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    cashCounts =
-        context.watch<CashCountProvider>().cashCounts.reversed.toList();
+    dayCashCounts =
+        context.watch<DayCashCountProvider>().dayCashCounts.reversed.toList();
 
     return Scaffold(
       appBar: AppBar(
@@ -42,7 +42,8 @@ class _HomePageState extends State<HomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          if (cashCounts.isNotEmpty && cashCounts.first.finalAmount == 0) {
+          if (dayCashCounts.isNotEmpty &&
+              dayCashCounts.first.finalCashCount == null) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content: Text(
@@ -62,8 +63,8 @@ class _HomePageState extends State<HomePage> {
         child: const Icon(Icons.add),
       ),
       body: Center(
-        child: cashCounts.isNotEmpty
-            ? _CashCountList(cashCounts: cashCounts)
+        child: dayCashCounts.isNotEmpty
+            ? _CashCountList(dayCashCounts: dayCashCounts)
             : const _NoCashCounts(),
       ),
     );
@@ -90,19 +91,19 @@ class _NoCashCounts extends StatelessWidget {
 }
 
 class _CashCountList extends StatelessWidget {
-  const _CashCountList({required this.cashCounts});
+  const _CashCountList({required this.dayCashCounts});
 
-  final List<CashCount> cashCounts;
+  final List<DayCashCount> dayCashCounts;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.all(10),
       child: ListView.separated(
-        itemCount: cashCounts.length,
+        itemCount: dayCashCounts.length,
         separatorBuilder: (context, index) => const Divider(),
         itemBuilder: (context, index) {
-          return CashCountCard(cashCount: cashCounts[index]);
+          return CashCountCard(dayCashCount: dayCashCounts[index]);
         },
       ),
     );
