@@ -1,8 +1,8 @@
-import 'package:arqueo_caja/models/cash_count.dart';
+import 'package:arqueo_caja/models/day_cash_count.dart';
 
 class Props {
   String? where;
-  CashCount? cashCount;
+  DayCashCount? dayCashCount;
 
-  Props({this.where, this.cashCount});
+  Props({this.where, this.dayCashCount});
 }
