@@ -1,5 +1,6 @@
 import 'package:arqueo_caja/constants/menu_entries.dart';
 import 'package:arqueo_caja/custom/custom_input_field.dart';
+import 'package:arqueo_caja/custom/mini_cashcount_tile.dart';
 import 'package:arqueo_caja/models/cash_count.dart';
 import 'package:arqueo_caja/models/day_cash_count.dart';
 import 'package:arqueo_caja/providers/daycashcount_provider.dart';
@@ -7,7 +8,6 @@ import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 import 'package:arqueo_caja/models/mini_cashcount.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class AddCashCountPage extends StatefulWidget {
   const AddCashCountPage({super.key});
@@ -159,14 +159,17 @@ class _AddCashCountPageState extends State<AddCashCountPage> {
       bruteCash: cashCountMap['bruteCash'],
     );
 
+    //* Se agrega el primer cashcount al daycashcount
     DayCashCount newDayCashCount = DayCashCount(
       id: const Uuid().v4(),
       date: DateTime.now(),
       initialCashCount: cashCount,
     );
 
+    //* Se agrega el daycashcount al provider
     context.read<DayCashCountProvider>().addDayCashCount(newDayCashCount);
 
+    //* Se regresa a la home page
     Navigator.pop(context);
   }
 
@@ -282,7 +285,7 @@ class _AddCashCountPageState extends State<AddCashCountPage> {
             Expanded(
               child: ListView.separated(
                 itemBuilder: (context, index) {
-                  return _MiniCashCountTile(
+                  return MiniCashCountTile(
                     miniCashCounts[index],
                     onDelete: deleteMiniCashCount,
                   );
@@ -300,40 +303,6 @@ class _AddCashCountPageState extends State<AddCashCountPage> {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _MiniCashCountTile extends StatelessWidget {
-  final MiniCashCount miniCashCount;
-  final Function(String) onDelete;
-
-  const _MiniCashCountTile(this.miniCashCount, {required this.onDelete});
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(
-        miniCashCount.name,
-        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-      ),
-      subtitle: miniCashCount.name != 'Monto bruto'
-          ? Text(
-              NumberFormat.currency().format(miniCashCount.total),
-              style: const TextStyle(fontSize: 16),
-            )
-          : null,
-      trailing: Text(
-        NumberFormat.currency().format(miniCashCount.total),
-        style: const TextStyle(fontSize: 18),
-      ),
-      leading: IconButton(
-        icon: const Icon(
-          Icons.delete,
-          color: Colors.red,
-        ),
-        onPressed: () => onDelete(miniCashCount.id),
       ),
     );
   }
