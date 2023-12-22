@@ -104,6 +104,59 @@ class CashCountCard extends StatelessWidget {
                         ),
                         child: const Text('Cerrar arqueo'),
                       ),
+                      FilledButton(
+                          onPressed: () {
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title: const Text('Editar arqueo'),
+                                    content: const Text(
+                                        '¿Qué arqueo quieres editar?'),
+                                    actions: [
+                                      TextButton(
+                                          onPressed: () {
+                                            Navigator.pushNamed(context, '/add',
+                                                arguments: Props(
+                                                    dayCashCount: dayCashCount,
+                                                    where: '/initial'));
+                                          },
+                                          child: const Text('Arqueo inicial')),
+                                      TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+
+                                            if (dayCashCount.finalCashCount ==
+                                                null) {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                const SnackBar(
+                                                  content: Text(
+                                                    'No se puede editar el arqueo final porque no se ha realizado',
+                                                    style: TextStyle(
+                                                        color: Colors.white),
+                                                  ),
+                                                  duration:
+                                                      Duration(seconds: 2),
+                                                  showCloseIcon: true,
+                                                  closeIconColor: Colors.white,
+                                                  backgroundColor: Colors.red,
+                                                ),
+                                              );
+                                              return;
+                                            }
+
+                                            Navigator.pushNamed(context, '/add',
+                                                arguments: Props(
+                                                    dayCashCount: dayCashCount,
+                                                    where: '/final'));
+                                          },
+                                          child: const Text('Arqueo Final'))
+                                    ],
+                                  );
+                                });
+                          },
+                          child: const Text('Editar')),
                       FilledButton.tonalIcon(
                         onPressed: () {
                           showDialog(
