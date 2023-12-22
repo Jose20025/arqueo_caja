@@ -2,7 +2,7 @@ import 'package:arqueo_caja/models/cash_count.dart';
 
 class DayCashCount {
   final String id;
-  final CashCount initialCashCount;
+  CashCount initialCashCount;
   CashCount? finalCashCount;
   final DateTime date;
 
@@ -15,6 +15,10 @@ class DayCashCount {
 
   void setFinalCashCount(CashCount finalCashCount) {
     this.finalCashCount = finalCashCount;
+  }
+
+  void setInitialCashCount(CashCount initialCashCount) {
+    this.initialCashCount = initialCashCount;
   }
 
   factory DayCashCount.fromJson(Map<String, dynamic> json) {
