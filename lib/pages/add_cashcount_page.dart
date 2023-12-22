@@ -1,11 +1,13 @@
+import 'package:arqueo_caja/constants/menu_entries.dart';
 import 'package:arqueo_caja/custom/custom_input_field.dart';
 import 'package:arqueo_caja/models/cash_count.dart';
 import 'package:arqueo_caja/models/day_cash_count.dart';
-import 'package:arqueo_caja/models/props.dart';
 import 'package:arqueo_caja/providers/daycashcount_provider.dart';
-import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
+import 'package:arqueo_caja/models/mini_cashcount.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class AddCashCountPage extends StatefulWidget {
   const AddCashCountPage({super.key});
@@ -15,243 +17,381 @@ class AddCashCountPage extends StatefulWidget {
 }
 
 class _AddCashCountPageState extends State<AddCashCountPage> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final List<MiniCashCount> miniCashCounts = [];
+  final TextEditingController _amountController = TextEditingController();
+  String? optionSelected;
 
-  int? cash10;
-  int? cash20;
-  int? cash50;
-  int? cash100;
-  int? cash200;
-
-  int? money5;
-  int? money2;
-  int? money1;
-  int? money05;
-
-  double? backCash;
-  double? backMoney;
-
-  void saveCashCount(Props arguments) {
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
-
-      double total = calculateTotal();
-
-      if (total == 0) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('El arqueo no puede ser 0',
-                style: TextStyle(color: Colors.white)),
-            backgroundColor: Colors.red,
-            duration: Duration(milliseconds: 1500),
-          ),
-        );
-        return;
-      }
-
-      if (arguments.where! == '/complete') {
-        CashCount finalCashCount = CashCount(
-          amount: total,
-          cash10: cash10,
-          cash20: cash20,
-          cash50: cash50,
-          cash100: cash100,
-          cash200: cash200,
-          money5: money5,
-          money2: money2,
-          money1: money1,
-          money05: money05,
-          backCash: backCash,
-          backMoney: backMoney,
-        );
-
-        context
-            .read<DayCashCountProvider>()
-            .completeDayCashCount(arguments.dayCashCount!.id, finalCashCount);
-
-        context.read<DayCashCountProvider>().saveDayCashCounts();
-
-        Navigator.of(context).pop();
-      } else {
-        CashCount initialCashCount = CashCount(
-          amount: total,
-          cash10: cash10,
-          cash20: cash20,
-          cash50: cash50,
-          cash100: cash100,
-          cash200: cash200,
-          money5: money5,
-          money2: money2,
-          money1: money1,
-          money05: money05,
-          backCash: backCash,
-          backMoney: backMoney,
-        );
-
-        DayCashCount dayCashCount = DayCashCount(
-          id: const Uuid().v4(),
-          date: DateTime.now(),
-          initialCashCount: initialCashCount,
-        );
-
-        context.read<DayCashCountProvider>().addDayCashCount(dayCashCount);
-        context.read<DayCashCountProvider>().saveDayCashCounts();
-
-        Navigator.pop(context);
-      }
-    }
+  void changeDropdownValue(String newValue) {
+    setState(() {
+      optionSelected = newValue;
+    });
   }
 
-  double calculateTotal() {
+  void changeAmount(String newValue) {
+    if (newValue.isEmpty) {
+      return;
+    }
+
+    setState(() {
+      _amountController.text = newValue;
+    });
+  }
+
+  void deleteMiniCashCount(String id) {
+    setState(() {
+      miniCashCounts.removeWhere((element) => element.id == id);
+    });
+  }
+
+  void onSaveCashCount() {
+    ScaffoldMessenger.of(context).clearSnackBars();
+
+    if (miniCashCounts.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Debe agregar al menos un elemento',
+            style: TextStyle(color: Colors.white),
+          ),
+          closeIconColor: Colors.white,
+          duration: Duration(seconds: 1),
+          showCloseIcon: true,
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    double total = 0;
+    Map<String, dynamic> cashCountMap = {};
+
+    for (MiniCashCount miniCashCount in miniCashCounts) {
+      total += miniCashCount.total;
+
+      switch (miniCashCount.name) {
+        case 'Billetes de 200':
+          if (cashCountMap.containsKey('cash200')) {
+            cashCountMap['cash200'] += miniCashCount.amount;
+          } else {
+            cashCountMap['cash200'] = miniCashCount.amount;
+          }
+
+          break;
+        case 'Billetes de 100':
+          if (cashCountMap.containsKey('cash100')) {
+            cashCountMap['cash100'] += miniCashCount.amount;
+          } else {
+            cashCountMap['cash100'] = miniCashCount.amount;
+          }
+
+          break;
+        case 'Billetes de 50':
+          if (cashCountMap.containsKey('cash50')) {
+            cashCountMap['cash50'] += miniCashCount.amount;
+          } else {
+            cashCountMap['cash50'] = miniCashCount.amount;
+          }
+          break;
+        case 'Billetes de 20':
+          if (cashCountMap.containsKey('cash20')) {
+            cashCountMap['cash20'] += miniCashCount.amount;
+          } else {
+            cashCountMap['cash20'] = miniCashCount.amount;
+          }
+          break;
+        case 'Billetes de 10':
+          if (cashCountMap.containsKey('cash10')) {
+            cashCountMap['cash10'] += miniCashCount.amount;
+          } else {
+            cashCountMap['cash10'] = miniCashCount.amount;
+          }
+          break;
+        case 'Monedas de 5':
+          if (cashCountMap.containsKey('money5')) {
+            cashCountMap['money5'] += miniCashCount.amount;
+          } else {
+            cashCountMap['money5'] = miniCashCount.amount;
+          }
+          break;
+        case 'Monedas de 2':
+          if (cashCountMap.containsKey('money2')) {
+            cashCountMap['money2'] += miniCashCount.amount;
+          } else {
+            cashCountMap['money2'] = miniCashCount.amount;
+          }
+          break;
+        case 'Monedas de 1':
+          if (cashCountMap.containsKey('money1')) {
+            cashCountMap['money1'] += miniCashCount.amount;
+          } else {
+            cashCountMap['money1'] = miniCashCount.amount;
+          }
+          break;
+        case 'Monedas de 0.50':
+          if (cashCountMap.containsKey('money05')) {
+            cashCountMap['money05'] += miniCashCount.amount;
+          } else {
+            cashCountMap['money05'] = miniCashCount.amount;
+          }
+          break;
+        case 'Monto bruto':
+          if (cashCountMap.containsKey('bruteCash')) {
+            cashCountMap['bruteCash'] += miniCashCount.total;
+          } else {
+            cashCountMap['bruteCash'] = miniCashCount.total;
+          }
+          break;
+      }
+    }
+
+    //* Creamos el primer cashchount
+    CashCount cashCount = CashCount(
+      amount: total,
+      cash10: cashCountMap['cash10'],
+      cash20: cashCountMap['cash20'],
+      cash50: cashCountMap['cash50'],
+      cash100: cashCountMap['cash100'],
+      cash200: cashCountMap['cash200'],
+      money5: cashCountMap['money5'],
+      money2: cashCountMap['money2'],
+      money1: cashCountMap['money1'],
+      money05: cashCountMap['money05'],
+      bruteCash: cashCountMap['bruteCash'],
+    );
+
+    DayCashCount newDayCashCount = DayCashCount(
+      id: const Uuid().v4(),
+      date: DateTime.now(),
+      initialCashCount: cashCount,
+    );
+
+    context.read<DayCashCountProvider>().addDayCashCount(newDayCashCount);
+
+    Navigator.pop(context);
+  }
+
+  void onAdd() {
+    ScaffoldMessenger.of(context).clearSnackBars();
+
+    if (optionSelected == null || optionSelected!.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Debe seleccionar una opción',
+            style: TextStyle(color: Colors.white),
+          ),
+          closeIconColor: Colors.white,
+          duration: Duration(seconds: 1),
+          showCloseIcon: true,
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    if (_amountController.text.isEmpty || _amountController.text == '0') {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Debe ingresar una cantidad',
+            style: TextStyle(color: Colors.white),
+          ),
+          closeIconColor: Colors.white,
+          duration: Duration(seconds: 1),
+          showCloseIcon: true,
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    String name = '';
     double total = 0;
 
-    total += (cash10!) * 10;
-    total += (cash20!) * 20;
-    total += (cash50!) * 50;
-    total += (cash100!) * 100;
-    total += (cash200!) * 200;
+    switch (optionSelected) {
+      case 'b200':
+        name = 'Billetes de 200';
+        total = 200 * double.parse(_amountController.text);
+        break;
+      case 'b100':
+        name = 'Billetes de 100';
+        total = 100 * double.parse(_amountController.text);
+        break;
+      case 'b50':
+        name = 'Billetes de 50';
+        total = 50 * double.parse(_amountController.text);
+        break;
+      case 'b20':
+        name = 'Billetes de 20';
+        total = 20 * double.parse(_amountController.text);
+        break;
+      case 'b10':
+        name = 'Billetes de 10';
+        total = 10 * double.parse(_amountController.text);
+        break;
+      case 'm5':
+        name = 'Monedas de 5';
+        total = 5 * double.parse(_amountController.text);
+        break;
+      case 'm2':
+        name = 'Monedas de 2';
+        total = 2 * double.parse(_amountController.text);
+        break;
+      case 'm1':
+        name = 'Monedas de 1';
+        total = 1 * double.parse(_amountController.text);
+        break;
+      case 'm050':
+        name = 'Monedas de 0.50';
+        total = 0.5 * double.parse(_amountController.text);
+        break;
+      case 'bruto':
+        name = 'Monto bruto';
+        total = double.parse(_amountController.text);
+        break;
+    }
 
-    total += (money5!) * 5;
-    total += (money2!) * 2;
-    total += (money1!) * 1;
-    total += (money05!) * 0.5;
+    setState(() {
+      miniCashCounts.add(MiniCashCount(
+          id: const Uuid().v4(),
+          name: name,
+          amount: int.parse(_amountController.text),
+          total: total));
+    });
 
-    total += backCash!;
-    total += backMoney!;
+    _amountController.clear();
+    optionSelected = null;
 
-    return total;
+    FocusScope.of(context).unfocus();
   }
 
   @override
   Widget build(BuildContext context) {
-    final arguments = ModalRoute.of(context)!.settings.arguments as Props;
-
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Nuevo arqueo de caja'),
+        title: const Text('Agregar Arqueo'),
         centerTitle: true,
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => saveCashCount(arguments),
+        onPressed: onSaveCashCount,
         child: const Icon(Icons.save),
       ),
-      body: Form(
-        key: _formKey,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const Divider(),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  CustomInputField(
-                    label: 'Billetes de 100',
-                    width: 150,
-                    onSaved: (value) {
-                      cash100 =
-                          int.tryParse(value!) != null ? int.parse(value) : 0;
-                    },
+      body: SizedBox(
+        child: Column(
+          children: [
+            Expanded(
+              child: ListView.separated(
+                itemBuilder: (context, index) {
+                  return _MiniCashCountTile(
+                    miniCashCounts[index],
+                    onDelete: deleteMiniCashCount,
+                  );
+                },
+                separatorBuilder: (_, __) => const Divider(),
+                itemCount: miniCashCounts.length,
+              ),
+            ),
+            _BottomMenu(
+              onAdd: onAdd,
+              amountController: _amountController,
+              optionSelected: optionSelected,
+              changeDropdownValue: changeDropdownValue,
+              changeAmount: changeAmount,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _MiniCashCountTile extends StatelessWidget {
+  final MiniCashCount miniCashCount;
+  final Function(String) onDelete;
+
+  const _MiniCashCountTile(this.miniCashCount, {required this.onDelete});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text(
+        miniCashCount.name,
+        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      ),
+      subtitle: miniCashCount.name != 'Monto bruto'
+          ? Text(
+              NumberFormat.currency().format(miniCashCount.total),
+              style: const TextStyle(fontSize: 16),
+            )
+          : null,
+      trailing: Text(
+        NumberFormat.currency().format(miniCashCount.total),
+        style: const TextStyle(fontSize: 18),
+      ),
+      leading: IconButton(
+        icon: const Icon(
+          Icons.delete,
+          color: Colors.red,
+        ),
+        onPressed: () => onDelete(miniCashCount.id),
+      ),
+    );
+  }
+}
+
+class _BottomMenu extends StatelessWidget {
+  final Function() onAdd;
+  final Function(String) changeDropdownValue;
+  final Function(String) changeAmount;
+  final TextEditingController amountController;
+  final String? optionSelected;
+
+  const _BottomMenu(
+      {required this.onAdd,
+      required this.changeDropdownValue,
+      required this.changeAmount,
+      required this.amountController,
+      required this.optionSelected});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+      child: SizedBox(
+        height: 130,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 10),
+                    child: DropdownButtonFormField(
+                      items: dropdownMenuEntries,
+                      value: optionSelected,
+                      onChanged: (value) => changeDropdownValue(value!),
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Opciones',
+                      ),
+                    ),
                   ),
-                  CustomInputField(
-                      label: 'Billetes de 200',
-                      width: 150,
-                      onSaved: (value) {
-                        cash200 =
-                            int.tryParse(value!) != null ? int.parse(value) : 0;
-                      }),
-                ],
-              ),
-              const SizedBox(height: 20),
-              CustomInputField(
-                  label: 'Billetes de 50',
-                  width: 345,
-                  onSaved: (value) {
-                    cash50 =
-                        int.tryParse(value!) != null ? int.parse(value) : 0;
-                  }),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  CustomInputField(
-                      label: 'Billetes de 10',
-                      width: 150,
-                      onSaved: (value) {
-                        cash10 =
-                            int.tryParse(value!) != null ? int.parse(value) : 0;
-                      }),
-                  CustomInputField(
-                      label: 'Billetes de 20',
-                      width: 150,
-                      onSaved: (value) {
-                        cash20 =
-                            int.tryParse(value!) != null ? int.parse(value) : 0;
-                      }),
-                ],
-              ),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  CustomInputField(
-                      label: 'Monedas de 5',
-                      width: 150,
-                      onSaved: (value) {
-                        money5 =
-                            int.tryParse(value!) != null ? int.parse(value) : 0;
-                      }),
-                  CustomInputField(
-                      label: 'Monedas de 2',
-                      width: 150,
-                      onSaved: (value) {
-                        money2 =
-                            int.tryParse(value!) != null ? int.parse(value) : 0;
-                      }),
-                ],
-              ),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  CustomInputField(
-                      label: 'Monedas de 1',
-                      width: 150,
-                      onSaved: (value) {
-                        money1 =
-                            int.tryParse(value!) != null ? int.parse(value) : 0;
-                      }),
-                  CustomInputField(
-                      label: 'Monedas de 0,5',
-                      width: 150,
-                      onSaved: (value) {
-                        money05 =
-                            int.tryParse(value!) != null ? int.parse(value) : 0;
-                      }),
-                ],
-              ),
-              const SizedBox(height: 20),
-              const Divider(),
-              const SizedBox(height: 20),
-              CustomInputField(
-                label: 'Plata de atrás',
-                width: 345,
-                onSaved: (value) {
-                  backCash =
-                      double.tryParse(value!) != null ? double.parse(value) : 0;
-                },
-              ),
-              const SizedBox(height: 20),
-              CustomInputField(
-                label: 'Monedas de atrás',
-                width: 345,
-                onSaved: (value) {
-                  backMoney =
-                      double.tryParse(value!) != null ? double.parse(value) : 0;
-                },
-              ),
-            ],
-          ),
+                ),
+                CustomInputField(
+                  label: 'Cantidad',
+                  controller: amountController,
+                  width: MediaQuery.of(context).size.width * 0.4,
+                  onChange: (value) => changeAmount(value),
+                ),
+              ],
+            ),
+            FilledButton.tonalIcon(
+              onPressed: onAdd,
+              icon: const Icon(Icons.add),
+              label: const Text('Agregar'),
+            )
+          ],
         ),
       ),
     );
