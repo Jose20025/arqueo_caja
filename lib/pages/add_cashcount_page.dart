@@ -170,10 +170,18 @@ class _AddCashCountPageState extends State<AddCashCountPage> {
 
       //* Se agrega el daycashcount al provider
       context.read<DayCashCountProvider>().addDayCashCount(newDayCashCount);
-    } else {
+    } else if (arguments.where! == '/complete') {
       context
           .read<DayCashCountProvider>()
           .completeDayCashCount(arguments.dayCashCount!.id, cashCount);
+    } else if (arguments.where! == '/initial') {
+      context
+          .read<DayCashCountProvider>()
+          .editInitialCashCount(arguments.dayCashCount!.id, cashCount);
+    } else {
+      context
+          .read<DayCashCountProvider>()
+          .editFinalCashCount(arguments.dayCashCount!.id, cashCount);
     }
 
     //* Se guarda el daycashcount en el storage
