@@ -37,6 +37,28 @@ class DayCashCountProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void editInitialCashCount(String id, CashCount initialCashCount) {
+    _dayCashCounts = _dayCashCounts.map((dayCashCount) {
+      if (dayCashCount.id == id) {
+        dayCashCount.setInitialCashCount(initialCashCount);
+      }
+
+      return dayCashCount;
+    }).toList();
+    notifyListeners();
+  }
+
+  void editFinalCashCount(String id, CashCount finalCashCount) {
+    _dayCashCounts = _dayCashCounts.map((dayCashCount) {
+      if (dayCashCount.id == id) {
+        dayCashCount.setFinalCashCount(finalCashCount);
+      }
+
+      return dayCashCount;
+    }).toList();
+    notifyListeners();
+  }
+
   void completeDayCashCount(String id, CashCount finalCashCount) {
     _dayCashCounts = _dayCashCounts.map((dayCashCount) {
       if (dayCashCount.id == id) {
