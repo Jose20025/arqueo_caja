@@ -18,7 +18,7 @@ class MiniCashCountTile extends StatelessWidget {
       ),
       subtitle: miniCashCount.name != 'Monto bruto'
           ? Text(
-              NumberFormat.currency().format(miniCashCount.total),
+              'Cantidad: ${miniCashCount.amount}',
               style: const TextStyle(fontSize: 16),
             )
           : null,

@@ -3,6 +3,7 @@ import 'package:arqueo_caja/custom/custom_input_field.dart';
 import 'package:arqueo_caja/custom/mini_cashcount_tile.dart';
 import 'package:arqueo_caja/models/cash_count.dart';
 import 'package:arqueo_caja/models/day_cash_count.dart';
+import 'package:arqueo_caja/models/props.dart';
 import 'package:arqueo_caja/providers/daycashcount_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
@@ -43,7 +44,7 @@ class _AddCashCountPageState extends State<AddCashCountPage> {
     });
   }
 
-  void onSaveCashCount() {
+  void onSaveCashCount(Props arguments) {
     ScaffoldMessenger.of(context).clearSnackBars();
 
     if (miniCashCounts.isEmpty) {
@@ -144,7 +145,7 @@ class _AddCashCountPageState extends State<AddCashCountPage> {
       }
     }
 
-    //* Creamos el primer cashchount
+    //* Creamos el cashcount
     CashCount cashCount = CashCount(
       amount: total,
       cash10: cashCountMap['cash10'],
@@ -159,15 +160,24 @@ class _AddCashCountPageState extends State<AddCashCountPage> {
       bruteCash: cashCountMap['bruteCash'],
     );
 
-    //* Se agrega el primer cashcount al daycashcount
-    DayCashCount newDayCashCount = DayCashCount(
-      id: const Uuid().v4(),
-      date: DateTime.now(),
-      initialCashCount: cashCount,
-    );
+    if (arguments.where! == '/result') {
+      //* Se agrega el primer cashcount al daycashcount
+      DayCashCount newDayCashCount = DayCashCount(
+        id: const Uuid().v4(),
+        date: DateTime.now(),
+        initialCashCount: cashCount,
+      );
 
-    //* Se agrega el daycashcount al provider
-    context.read<DayCashCountProvider>().addDayCashCount(newDayCashCount);
+      //* Se agrega el daycashcount al provider
+      context.read<DayCashCountProvider>().addDayCashCount(newDayCashCount);
+    } else {
+      context
+          .read<DayCashCountProvider>()
+          .completeDayCashCount(arguments.dayCashCount!.id, cashCount);
+    }
+
+    //* Se guarda el daycashcount en el storage
+    context.read<DayCashCountProvider>().saveDayCashCounts();
 
     //* Se regresa a la home page
     Navigator.pop(context);
@@ -270,13 +280,15 @@ class _AddCashCountPageState extends State<AddCashCountPage> {
 
   @override
   Widget build(BuildContext context) {
+    final arguments = ModalRoute.of(context)!.settings.arguments as Props;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Agregar Arqueo'),
         centerTitle: true,
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: onSaveCashCount,
+        onPressed: () => onSaveCashCount(arguments),
         child: const Icon(Icons.save),
       ),
       body: SizedBox(
