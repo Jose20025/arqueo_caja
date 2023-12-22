@@ -9,8 +9,7 @@ class CashCount {
   final int? money2;
   final int? money1;
   final int? money05;
-  double? backCash;
-  double? backMoney;
+  double? bruteCash;
 
   CashCount({
     required this.amount,
@@ -23,8 +22,7 @@ class CashCount {
     this.money2,
     this.money1,
     this.money05,
-    this.backCash,
-    this.backMoney,
+    this.bruteCash,
   });
 
   void setAmount(double amount) {
@@ -43,8 +41,7 @@ class CashCount {
       'money2': money2,
       'money1': money1,
       'money05': money05,
-      'backCash': backCash,
-      'backMoney': backMoney,
+      'bruteCash': bruteCash,
     };
   }
 
@@ -60,8 +57,7 @@ class CashCount {
       money2: json['money2'],
       money1: json['money1'],
       money05: json['money05'],
-      backCash: json['backCash'],
-      backMoney: json['backMoney'],
+      bruteCash: json['bruteCash'],
     );
   }
 }
