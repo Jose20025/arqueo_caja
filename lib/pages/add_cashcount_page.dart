@@ -294,26 +294,46 @@ class _AddCashCountPageState extends State<AddCashCountPage> {
       appBar: AppBar(
         title: const Text('Agregar Arqueo'),
         centerTitle: true,
+        // actions: miniCashCounts.isEmpty
+        //     ? []
+        //     : [
+        //         IconButton.filledTonal(
+        //           onPressed: () => onSaveCashCount(arguments),
+        //           icon: const Icon(Icons.save),
+        //         ),
+        //         const SizedBox(width: 10)
+        //       ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => onSaveCashCount(arguments),
-        child: const Icon(Icons.save),
-      ),
+      floatingActionButton: miniCashCounts.isNotEmpty
+          ? FloatingActionButton(
+              onPressed: () => onSaveCashCount(arguments),
+              child: const Icon(Icons.save),
+            )
+          : null,
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniEndTop,
       body: SizedBox(
         child: Column(
           children: [
+            const SizedBox(height: 30),
             Expanded(
-              child: ListView.separated(
-                itemBuilder: (context, index) {
-                  return MiniCashCountTile(
-                    miniCashCounts[index],
-                    onDelete: deleteMiniCashCount,
-                  );
-                },
-                separatorBuilder: (_, __) => const Divider(),
-                itemCount: miniCashCounts.length,
-              ),
-            ),
+                child: miniCashCounts.isNotEmpty
+                    ? ListView.separated(
+                        itemBuilder: (context, index) {
+                          return MiniCashCountTile(
+                            miniCashCounts[index],
+                            onDelete: deleteMiniCashCount,
+                          );
+                        },
+                        separatorBuilder: (_, __) => const Divider(),
+                        itemCount: miniCashCounts.length,
+                      )
+                    : const Center(
+                        child: Text(
+                          'Agrega un conteo de efectivo',
+                          style: TextStyle(fontSize: 30),
+                          textAlign: TextAlign.center,
+                        ),
+                      )),
             _BottomMenu(
               onAdd: onAdd,
               amountController: _amountController,
@@ -375,10 +395,15 @@ class _BottomMenu extends StatelessWidget {
                 ),
               ],
             ),
-            FilledButton.tonalIcon(
-              onPressed: onAdd,
-              icon: const Icon(Icons.add),
-              label: const Text('Agregar'),
+            Row(
+              children: [
+                const Spacer(),
+                FilledButton.tonalIcon(
+                  onPressed: onAdd,
+                  icon: const Icon(Icons.add),
+                  label: const Text('Agregar'),
+                ),
+              ],
             )
           ],
         ),
