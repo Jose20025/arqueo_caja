@@ -1,6 +1,5 @@
 import 'package:arqueo_caja/custom/daycashcount_card.dart';
 import 'package:arqueo_caja/models/day_cash_count.dart';
-import 'package:arqueo_caja/models/props.dart';
 import 'package:arqueo_caja/providers/daycashcount_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -12,20 +11,34 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
   List<DayCashCount> dayCashCounts = [];
+  late TabController _tabController;
+  int selectedTab = 0;
 
   @override
   void initState() {
+    super.initState();
+
+    _tabController = TabController(length: 2, vsync: this);
+
+    _tabController.addListener(() {
+      setState(() {
+        selectedTab = _tabController.index;
+      });
+    });
+
     if (context.read<DayCashCountProvider>().dayCashCounts.isEmpty) {
       context.read<DayCashCountProvider>().loadCashCounts();
     }
-    super.initState();
   }
 
   @override
   void dispose() {
     context.read<DayCashCountProvider>().saveDayCashCounts();
+
+    _tabController.dispose();
 
     super.dispose();
   }
@@ -39,34 +52,48 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: const Text('Arqueo de Caja'),
         centerTitle: true,
+        bottom: TabBar(
+          controller: _tabController,
+          tabs: const [
+            Tab(text: 'Arqueos de caja', icon: Icon(Icons.attach_money)),
+            Tab(text: 'Gastos', icon: Icon(Icons.money_off)),
+          ],
+        ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          if (dayCashCounts.isNotEmpty &&
-              dayCashCounts.first.finalCashCount == null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text(
-                    'Tienes un arqueo sin finalizar, finalizalo antes de agregar otro',
-                    style: TextStyle(color: Colors.white)),
-                backgroundColor: Colors.red,
-                duration: Duration(milliseconds: 1500),
-              ),
-            );
+      floatingActionButton: selectedTab == 0
+          ? FloatingActionButton(
+              onPressed: () {
+                Navigator.pushNamed(context, 'add_cash_count');
+              },
+              child: const Icon(Icons.add),
+            )
+          : FloatingActionButton(
+              onPressed: () {
+                Navigator.pushNamed(context, 'add_expense');
+              },
+              child: const Icon(Icons.add_card_outlined),
+            ),
+      body: TabBarView(controller: _tabController, children: [
+        _DayCashCounts(dayCashCounts: dayCashCounts),
+        const Text('Gastos')
+      ]),
+    );
+  }
+}
 
-            return;
-          }
+class _DayCashCounts extends StatelessWidget {
+  const _DayCashCounts({
+    required this.dayCashCounts,
+  });
 
-          Navigator.pushNamed(context, '/add',
-              arguments: Props(where: '/result'));
-        },
-        child: const Icon(Icons.add),
-      ),
-      body: Center(
-        child: dayCashCounts.isNotEmpty
-            ? _CashCountList(dayCashCounts: dayCashCounts)
-            : const _NoCashCounts(),
-      ),
+  final List<DayCashCount> dayCashCounts;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: dayCashCounts.isNotEmpty
+          ? _CashCountList(dayCashCounts: dayCashCounts)
+          : const _NoCashCounts(),
     );
   }
 }
